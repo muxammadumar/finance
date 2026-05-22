@@ -11,7 +11,10 @@ env/
 
 # Environment
 .env
-.env.*
+.env.local
+.env.production
+.env.staging
+!.env.example
 
 # IDE
 .idea/
@@ -22,6 +25,9 @@ env/
 # OS
 .DS_Store
 Thumbs.db
+
+# Telegram session files (contain auth credentials)
+*.session
 
 # Data
 *.db
