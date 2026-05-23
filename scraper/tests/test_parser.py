@@ -1,4 +1,4 @@
-from src.parser import parse_message
+from scraper.parser import parse_message
 
 
 DEBIT_MESSAGE = (

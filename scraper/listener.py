@@ -1,7 +1,7 @@
 import logging
 from telethon import TelegramClient, events
-from src.parser import parse_message
-from src import db
+from scraper.parser import parse_message
+from scraper import db
 
 logger = logging.getLogger(__name__)
 

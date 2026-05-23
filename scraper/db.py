@@ -150,6 +150,10 @@ def save_message_and_transaction(db_path, message_text, telegram_message_id, cha
         )
         raw_message_id = cursor.lastrowid
 
+        if transaction_data is None:
+            conn.commit()
+            return raw_message_id, None
+
         cursor.execute(
             """INSERT INTO transactions
                (type, description, amount, currency, card, merchant,
@@ -158,12 +162,12 @@ def save_message_and_transaction(db_path, message_text, telegram_message_id, cha
             (
                 transaction_data["type"],
                 transaction_data["description"],
-                to_tiyin(transaction_data["amount"]),
+                transaction_data["amount"],
                 transaction_data["currency"],
                 transaction_data.get("card"),
                 transaction_data.get("merchant"),
                 transaction_data["timestamp"],
-                to_tiyin(transaction_data["balance"]) if transaction_data.get("balance") is not None else None,
+                transaction_data.get("balance"),
                 transaction_data["raw_message"],
                 raw_message_id,
             ),

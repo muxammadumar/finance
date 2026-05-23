@@ -2,12 +2,15 @@ import asyncio
 import logging
 import os
 import sys
+from pathlib import Path
 
 from dotenv import load_dotenv
 from telethon import TelegramClient
 
-from src import db
-from src.listener import fetch_history, start_listener
+from scraper import db
+from scraper.listener import fetch_history, start_listener
+
+SCRAPER_DIR = Path(__file__).parent
 
 # ---------------------------------------------------------------------------
 # Logging setup
@@ -24,8 +27,8 @@ logging.getLogger("telethon").setLevel(logging.WARNING)
 
 
 def main() -> None:
-    # Load environment variables
-    load_dotenv()
+    # Load environment variables from scraper/.env
+    load_dotenv(SCRAPER_DIR / ".env")
 
     api_id = os.getenv("TELEGRAM_API_ID")
     api_hash = os.getenv("TELEGRAM_API_HASH")
@@ -51,10 +54,10 @@ def main() -> None:
     db.init_db(db_path)
     logger.info("Database ready at %s", db_path)
 
-    # Create Telethon client (user session, not bot)
-    client = TelegramClient("finance_session", int(api_id), api_hash)
-
     async def run():
+        # Create Telethon client inside async context to avoid event loop mismatch
+        session_path = str(SCRAPER_DIR / "finance_session")
+        client = TelegramClient(session_path, int(api_id), api_hash)
         async with client:
             await client.start(phone=phone)
             logger.info("Telegram client connected successfully")
